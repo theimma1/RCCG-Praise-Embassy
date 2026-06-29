@@ -1,7 +1,7 @@
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.dependencies import WorkerUser, get_db
@@ -16,6 +16,17 @@ from app.schemas.common import MessageResponse
 from app.services.attendance_service import AttendanceService
 
 router = APIRouter(prefix="/attendance", tags=["Attendance"])
+
+
+@router.get("/sessions", response_model=list[AttendanceSessionResponse])
+async def list_sessions(
+    current_user: WorkerUser,
+    db: Annotated[AsyncSession, Depends(get_db)],
+    check_in_open: bool | None = Query(None, description="Filter by check-in open status"),
+):
+    svc = AttendanceService(db)
+    sessions = await svc.list_sessions(current_user.campus_id, check_in_open)
+    return [AttendanceSessionResponse.model_validate(s) for s in sessions]
 
 
 @router.post("/sessions", response_model=AttendanceSessionResponse, status_code=status.HTTP_201_CREATED)

@@ -74,6 +74,17 @@ class AttendanceService(BaseService[AttendanceSession]):
         await self.db.refresh(record)
         return record
 
+    async def list_sessions(self, campus_id: UUID, check_in_open: bool | None = None) -> list[AttendanceSession]:
+        stmt = (
+            select(AttendanceSession)
+            .where(AttendanceSession.campus_id == campus_id)
+            .order_by(AttendanceSession.session_date.desc(), AttendanceSession.opened_at.desc())
+        )
+        if check_in_open is not None:
+            stmt = stmt.where(AttendanceSession.check_in_open == check_in_open)
+        result = await self.db.execute(stmt)
+        return list(result.scalars().all())
+
     async def get_session_by_event_date(self, event_id: UUID, session_date: date) -> AttendanceSession | None:
         result = await self.db.execute(
             select(AttendanceSession).where(
