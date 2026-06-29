@@ -1,6 +1,7 @@
 from app.db.models.campus import Campus
 from app.db.models.user import User, RefreshToken
 from app.db.models.member import Member
+from app.db.models.department import Department, DepartmentMember
 from app.db.models.guest import Guest
 from app.db.models.event import Event
 from app.db.models.attendance import AttendanceSession, AttendanceRecord
@@ -11,6 +12,8 @@ __all__ = [
     "User",
     "RefreshToken",
     "Member",
+    "Department",
+    "DepartmentMember",
     "Guest",
     "Event",
     "AttendanceSession",
