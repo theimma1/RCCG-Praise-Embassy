@@ -25,7 +25,7 @@ class Guest(SoftDeleteMixin, BaseModel):
     follow_up_status: Mapped[str] = mapped_column(String(50), default="pending")
     converted_member_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("members.id", ondelete="SET NULL"))
     notes: Mapped[str | None] = mapped_column(Text)
-    metadata: Mapped[dict] = mapped_column(JSONB, default=dict)
+    extra_data: Mapped[dict] = mapped_column(JSONB, default=dict)
 
     @property
     def full_name(self) -> str:
